@@ -19,16 +19,34 @@ description: >
 
 ### Mandatory pre-flight check:
 
+Before doing anything else, ask the user:
+
+> "请确认以下三项：① Chrome 浏览器中已安装 Codex 插件；② acaflow 已在 Chrome 中登录；③ 氢离子 已在 Chrome 中登录。都准备好了吗？"
+
+If the user says NO or is unsure, provide step-by-step setup instructions:
+
+---
+
+**Setup guide (provide to user if needed):**
+
 ```
-1. Can you open acaflow in Chrome? → YES/NO
-2. Can you open 氢离子 in Chrome? → YES/NO
+Step 1: 打开 Chrome 浏览器
+Step 2: 安装 Codex 浏览器插件（如未安装）
+        → 在 Chrome 插件商店搜索 "Codex" 并安装
+Step 3: 打开 acaflow 并登录
+        → 网址由用户或机构提供，确保页面正常加载且已登录
+Step 4: 打开 氢离子 (QingHydrogen) 并登录  
+        → 网址由用户或机构提供，确保聊天界面可用
+Step 5: 回到 Codex，重新发送综述写作指令
 ```
 
-**If either answer is NO — STOP immediately.** Tell the user:
+After the user confirms all three are ready, proceed to verify:
+- Run `pandoc --version` to confirm pandoc is installed
+- Run `python --version` or locate Python 3 for post-processing
 
-> "acaflow 和/或 氢离子 当前不可用。这两个外部平台是本工作流的基础——没有它们，我无法进行系统文献检索，强行写作会产生引用幻觉。请确保两个平台在 Chrome 中可以正常打开后重试。"
+---
 
-**Never, under any circumstances, fall back to writing from training data.** That is exactly the hallucination problem this workflow is designed to prevent. A review written without systematic literature retrieval is worse than no review at all.
+**If any of the three platforms is still inaccessible after setup attempts — STOP.** Tell the user which platform is blocking progress and wait for resolution. Never fall back to writing from training data. A review without systematic literature retrieval is worse than no review at all.
 
 ---
 
@@ -279,7 +297,7 @@ Use `scripts/fix_docx_fonts.py`:
 
 | Phase | Problem | Action |
 |-------|---------|--------|
-| 0 | acaflow/氢离子 inaccessible | **STOP** — tell user, do not proceed |
+| 0 | acaflow/氢离子 inaccessible | Guide user through setup: Chrome → Codex 插件 → acaflow 登录 → 氢离子 登录 → 重试 |
 | 0 | "acaflow" skill not found | Use THIS skill (acaflow-review-generator) — it IS the acaflow workflow |
 | 1 | Map limit reached | Delete oldest map via three-dot menu |
 | 1 | Unsaved map lost | Regenerate; always save immediately |
@@ -321,3 +339,5 @@ project-dir/
 ├── manuscript.docx            # Final output (Phase 6)
 └── nature.csl                 # Citation style (downloaded once)
 ```
+
+
