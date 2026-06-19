@@ -174,6 +174,18 @@ If acaflow shows an error or the "new map" button is unresponsive, the 3-map lim
 4. **Wait for user confirmation** that the deletion is done before attempting to create the next map.
 5. **Never assume deletion succeeded** — always verify with the user.
 
+### Extracting References from acaflow Maps
+
+Each acaflow map includes a built-in literature list ("文献" tab) showing the papers that form the clusters. These references should be collected — they complement the later 氢离子 search and provide a baseline reference pool.
+
+1. **After saving a map, switch to the "文献" tab** (usually next to the cluster visualization).
+2. **Scroll to the bottom** of the browser page to trigger lazy loading.
+3. **Click "查看更多"** (or equivalent load-more button) repeatedly until all references are visible.
+4. **Record every reference** into the master log. At minimum capture: title, authors, journal, year, DOI (if shown).
+5. **Note which map each reference came from** — this helps with Phase 4 deduplication and section grouping.
+
+If the reference list is very long (50+ papers), prioritize papers that appear in the core clusters (largest nodes or most central in the map). Papers in peripheral clusters are lower priority but should still be scanned for relevance.
+
 ### Map Rotation Pattern
 
 ```
@@ -235,7 +247,7 @@ Before declaring search complete:
 ## Phase 4: Reference Assembly
 
 ### 4.1 Deduplicate
-Cross-reference all entries in the master log. Merge duplicates.
+Cross-reference all entries in the master log — this includes both acaflow-extracted references (Phase 1) and 氢离子 search results (Phase 3). Merging these two sources typically yields the most comprehensive reference pool. Remove duplicates.
 
 ### 4.2 Verify DOIs
 Every reference must have a verified DOI:
@@ -391,6 +403,7 @@ project-dir/
 ├── manuscript.docx            # Final output (Phase 6)
 └── nature.csl                 # Citation style (downloaded once)
 ```
+
 
 
 
