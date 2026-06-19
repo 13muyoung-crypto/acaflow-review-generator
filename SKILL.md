@@ -55,6 +55,8 @@ After the user confirms all three are ready, proceed to verify:
 ```
 Phase 0: 前置检查 (acaflow + 氢离子 可用性)
     ↓
+Phase 0.5: 标题细化 (将泛泛的主题提炼为可投稿标题)
+    ↓
 Phase 1: acaflow 文献地图构建 (3-5张地图)
     ↓
 Phase 2: 汇总大纲
@@ -87,11 +89,32 @@ If acaflow or 氢离子 are inaccessible due to network issues (common with GitH
 
 ---
 
+## Phase 0.5: Title Refinement
+
+**Users often provide broad, informal topic descriptions** (e.g., "肠道菌群与孤独症的关系") rather than publication-ready titles. A good review title should be specific, informative, and reflect the article's conceptual structure.
+
+### Title refinement steps:
+
+1. **Analyze the user's topic** — identify the core subject, the angle (mechanism? biomarker? therapy?), and the scope.
+
+2. **Propose 3 title candidates** in Chinese, each with a different emphasis. Examples of well-structured titles:
+   - "肠-X轴与Y疾病：机制、标志物与治疗前景" （全景式，"：XXX, XXX, XXX" 在此处是可接受的标题格式，与正文小标题不同）
+   - "X在Y发生发展中的作用：从基础到临床"
+   - "X作为Y新型生物标志物的研究进展"
+
+3. **Present candidates to the user** with a brief note on which angle each emphasizes. Ask the user to choose or request adjustments.
+
+4. **Once the title is locked**, use it to derive the acaflow map architecture in Phase 1.
+
+**Do NOT proceed to Phase 1 with a vague user-supplied topic as the title.** An unrefined title produces unfocused literature maps and a poorly structured review.
+
+---
+
 ## Phase 1: Literature Mapping with acaflow
 
 ### Map Architecture — Derive from Title
 
-Read the article title and extract its conceptual dimensions. The standard decomposition template:
+Read the finalized article title (from Phase 0.5) and extract its conceptual dimensions. The standard decomposition template:
 
 ```
 文章标题
@@ -343,6 +366,7 @@ Use `scripts/fix_docx_fonts.py`:
 
 ```
 project-dir/
+├── refined-title.md           # Phase 0.5 output (finalized title + alternatives)
 ├── acaflow-maps-summary.md    # Clustering results from all maps
 ├── preliminary-outline.md     # Phase 2 output
 ├── hydrogen-refs-log.md       # Master reference log (Phase 3)
@@ -352,6 +376,7 @@ project-dir/
 ├── manuscript.docx            # Final output (Phase 6)
 └── nature.csl                 # Citation style (downloaded once)
 ```
+
 
 
 
