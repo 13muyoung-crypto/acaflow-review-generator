@@ -1,0 +1,4 @@
+﻿display_name: "Acaflow Review Generator"
+short_description: "acaflow文献地图 + 氢离子深搜 + nature-writing撰写，零幻觉中文综述工作流，适用任意主题"
+default_prompt: "我要写一篇中文综述，使用acaflow和氢离子进行系统文献检索，最终输出排版整齐的docx文件。"
+
