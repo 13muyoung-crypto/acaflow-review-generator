@@ -117,11 +117,24 @@ Read the article title and extract its conceptual dimensions. The standard decom
 
 ### acaflow Operational Rules
 
-1. **Maximum 3 saved maps at a time.**
-2. **Save every map immediately** after generation completes.
-3. **Screenshot each map after saving.**
-4. **Delete maps to make room** via the three-dot menu on each map card.
-5. **Double-check before deleting** — there is no trash recovery.
+1. **Maximum 3 saved maps at a time.** acaflow will refuse to create a new map when the limit is reached.
+2. **Save every map immediately** after generation completes. Before attempting to create a new map, double-check that the current one is saved — look for a confirmation indicator in the UI.
+3. **Screenshot each map after saving.** This is your permanent record of the clustering structure.
+4. **Delete maps to make room** via the three-dot menu on each map card. Only the user can perform this action — the AI cannot click UI elements.
+5. **Double-check before asking user to delete** — there is no trash recovery.
+
+### When acaflow Refuses to Create a New Map
+
+If acaflow shows an error or the "new map" button is unresponsive, the 3-map limit is likely reached. In this case:
+
+1. **Immediately verify which maps are currently saved.** List them out for the user.
+2. **Confirm the most recently generated map is saved.** If unsure, ask the user to verify.
+3. **Prompt the user to delete an old map:**
+
+> "acaflow 已达到 3 张地图上限，无法创建新地图。请手动删除一张已不需要的地图：在左侧地图列表中找到要删除的地图，点击卡片右上角三个点的按钮 → 选择删除。当前已保存的地图有：[列出地图名称]。建议删除最早的那张。删除后告诉我，我继续创建新地图。"
+
+4. **Wait for user confirmation** that the deletion is done before attempting to create the next map.
+5. **Never assume deletion succeeded** — always verify with the user.
 
 ### Map Rotation Pattern
 
@@ -339,5 +352,6 @@ project-dir/
 ├── manuscript.docx            # Final output (Phase 6)
 └── nature.csl                 # Citation style (downloaded once)
 ```
+
 
 
