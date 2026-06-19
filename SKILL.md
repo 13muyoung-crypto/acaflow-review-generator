@@ -55,9 +55,11 @@ After the user confirms all three are ready, proceed to verify:
 ```
 Phase 0: 前置检查 (acaflow + 氢离子 可用性)
     ↓
-Phase 0.5: 标题细化 (将泛泛的主题提炼为可投稿标题)
+Phase 1a: acaflow 核心关联地图 (Map ①)
     ↓
-Phase 1: acaflow 文献地图构建 (3-5张地图)
+Phase 1b: 基于 Map ① 聚类结果提炼正式标题
+    ↓
+Phase 1c: acaflow 剩余地图 (Map ②-⑤)
     ↓
 Phase 2: 汇总大纲
     ↓
@@ -89,32 +91,45 @@ If acaflow or 氢离子 are inaccessible due to network issues (common with GitH
 
 ---
 
-## Phase 0.5: Title Refinement
+## Phase 1a: Core Association Map (Map ①)
 
-**Users often provide broad, informal topic descriptions** (e.g., "肠道菌群与孤独症的关系") rather than publication-ready titles. A good review title should be specific, informative, and reflect the article's conceptual structure.
+**Start with only ONE map.** Build the map that captures the core association between the subject and the disease — the most direct epidemiological/observational/omics evidence.
+
+Use the user's raw topic description as the starting point. Example: "肠道菌群与孤独症关联的队列与组学研究".
+
+1. Create Map ① in acaflow.
+2. Save immediately + screenshot.
+3. Review the clustering results — what major themes emerged? What subtopics cluster together?
+
+## Phase 1b: Title Refinement
+
+**Now that you have real literature clusters, refine the title.**
+
+Users often provide broad, informal topic descriptions (e.g., "肠道菌群与孤独症的关系"). A good review title should be specific, informed by the actual literature landscape, and reflect the article's conceptual structure.
 
 ### Title refinement steps:
 
-1. **Analyze the user's topic** — identify the core subject, the angle (mechanism? biomarker? therapy?), and the scope.
+1. **Examine Map ① clustering results.** What are the dominant subtopics? Are there clear mechanistic themes? Biomarker angles? Therapeutic directions?
 
-2. **Propose 3 title candidates** in Chinese, each with a different emphasis. Examples of well-structured titles:
-   - "肠-X轴与Y疾病：机制、标志物与治疗前景" （全景式，"：XXX, XXX, XXX" 在此处是可接受的标题格式，与正文小标题不同）
-   - "X在Y发生发展中的作用：从基础到临床"
-   - "X作为Y新型生物标志物的研究进展"
+2. **Propose 3 title candidates** in Chinese, each grounded in what the literature actually contains. The `"X与Y：A、B与C"` format (colon + comma-separated dimensions) is acceptable for article titles — it differs from the banned colon format for section headings.
 
-3. **Present candidates to the user** with a brief note on which angle each emphasizes. Ask the user to choose or request adjustments.
+3. **Present candidates to the user:**
 
-4. **Once the title is locked**, use it to derive the acaflow map architecture in Phase 1.
+> "基于 Map ① 的文献聚类，该领域主要围绕 [主题A]、[主题B]、[主题C] 展开。我建议以下三个标题方向：
+> 1. [侧重全景式] — 覆盖机制、标志物、治疗三方面
+> 2. [侧重机制] — 深挖分子通路
+> 3. [侧重临床转化] — 聚焦诊断与治疗应用
+> 你倾向哪个？或者想融合调整？"
 
-**Do NOT proceed to Phase 1 with a vague user-supplied topic as the title.** An unrefined title produces unfocused literature maps and a poorly structured review.
+4. **Once the title is locked**, use it to derive the remaining maps in Phase 1c. A refined title makes the map branching logic much more precise.
 
----
+**Do NOT build Maps ②-⑤ with a vague user-supplied topic.** The title must be finalized before the remaining maps are created.
 
-## Phase 1: Literature Mapping with acaflow
+## Phase 1c: Remaining Maps (Map ②-⑤)
 
-### Map Architecture — Derive from Title
+### Map Architecture — Derive from the Finalized Title
 
-Read the finalized article title (from Phase 0.5) and extract its conceptual dimensions. The standard decomposition template:
+Read the finalized article title (from Phase 1b) and extract its conceptual dimensions. The standard decomposition template:
 
 ```
 文章标题
@@ -366,8 +381,8 @@ Use `scripts/fix_docx_fonts.py`:
 
 ```
 project-dir/
-├── refined-title.md           # Phase 0.5 output (finalized title + alternatives)
-├── acaflow-maps-summary.md    # Clustering results from all maps
+├── refined-title.md           # Phase 1b output (finalized title + Map ① rationale)
+├── acaflow-maps-summary.md    # Clustering results from all 5 maps
 ├── preliminary-outline.md     # Phase 2 output
 ├── hydrogen-refs-log.md       # Master reference log (Phase 3)
 ├── references-by-section.md   # Grouped references (Phase 4)
@@ -376,6 +391,7 @@ project-dir/
 ├── manuscript.docx            # Final output (Phase 6)
 └── nature.csl                 # Citation style (downloaded once)
 ```
+
 
 
 
