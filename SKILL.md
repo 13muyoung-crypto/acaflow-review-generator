@@ -7,6 +7,19 @@ description: Generate a Chinese scientific review article with zero hallucinatio
 
 > **This skill orchestrates a multi-phase pipeline. Do NOT skip phases. Do NOT write anything before Phase 5.**
 
+
+## ⛔ FIRST RULE — READ BEFORE ANYTHING ELSE
+
+**Never ask the user for acaflow or 氢离子 URLs. Never.** The user has already opened these pages in Chrome. Your job:
+
+1. Use browser control to find and switch to the existing tabs.
+2. If browser control is unavailable, say: "请切换到 Chrome 中已打开的 acaflow 标签页，我接着操作。" Then wait.
+3. If the tab truly doesn't exist, say: "请在 Chrome 中打开 acaflow 页面。" Do NOT ask "what's the URL?" — the user may not know or remember it.
+
+**Asking "acaflow 的网址是什么？" or "请告诉我 acaflow 网址" is FORBIDDEN.** It wastes time and the user has already solved this problem.
+
+---
+
 ## ⛔ CRITICAL: Before You Do Anything Else
 
 ### This skill depends on two external browser-based platforms:
