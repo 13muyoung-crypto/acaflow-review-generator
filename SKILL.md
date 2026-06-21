@@ -18,14 +18,21 @@ description: Generate a Chinese scientific review article with zero hallucinatio
 
 ### How the AI operates these platforms
 
-**Use the `browser:control-in-app-browser` or `chrome:control-chrome` skill to control Chrome directly.** The AI types queries, clicks buttons, scrolls pages, and extracts text from acaflow and 氢离子 — the same way a human would, but automated. Do NOT describe what to do and wait for the user to do it. Execute it yourself.
+**Use the `browser:control-in-app-browser` or `chrome:control-chrome` skill to control Chrome directly.** The AI types queries, clicks buttons, scrolls pages, and extracts text from acaflow and 氢离子.
+
+**Before asking the user for a URL, always check existing tabs first:**
+1. List open Chrome tabs via browser control.
+2. Look for tabs whose title or URL contains "acaflow" or "氢离子".
+3. If found, switch to that tab — do not ask the user anything.
+4. Only if no matching tab exists, ask the user to navigate to the page.
 
 **User intervention is ONLY needed for these specific cases:**
-- **Login:** First-time login to acaflow or 氢离子 (the AI cannot enter credentials)
-- **Map deletion:** The three-dot delete button on acaflow map cards (browser automation may not reach it)
-- **CAPTCHA:** When 氢离子 or acaflow shows a human verification challenge
+- **Login:** First-time login (the AI cannot enter credentials)
+- **Map deletion:** The three-dot delete button (browser automation may not reach it)
+- **CAPTCHA:** Human verification challenge
+- **No tab found:** User needs to open the platform page first
 
-For everything else — typing search queries, clicking search, scrolling, clicking "查看更多", switching tabs, reading results — the AI does it through browser control. Do not ask the user to do these things.
+For everything else — typing search queries, clicking buttons, scrolling, clicking "查看更多", switching between tabs, reading results — the AI does it through browser control. Do NOT ask the user to type, click, or copy-paste anything.
 
 ### Mandatory pre-flight check:
 
