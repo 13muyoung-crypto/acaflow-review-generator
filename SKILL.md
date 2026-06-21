@@ -36,60 +36,21 @@ For everything else — typing search queries, clicking buttons, scrolling, clic
 
 ### Mandatory pre-flight check:
 
-Before doing anything else, ask the user:
+DO NOT ask the user for URLs or confirmation. Check everything yourself via browser control.
 
-> "请确认以下三项：① Chrome 浏览器中已安装 Codex 插件；② acaflow 已在 Chrome 中登录；③ 氢离子 已在 Chrome 中登录。都准备好了吗？"
+1. Use browser-control skill to list open Chrome tabs.
+2. Look for tabs with "acaflow" or "氢离子" in the title/URL.
+3. If found: switch to the tab, verify the page is loaded and logged in. Done.
+4. If NOT found: tell user "请在 Chrome 中打开 acaflow 和氢离子页面，然后告诉我。" Do not ask for URLs.
+5. Run \pandoc --version\.
+6. Run \python --version\.
 
-If the user says NO or is unsure, provide step-by-step setup instructions:
+Setup guide (only if user doesn't know how):
+- Install Codex browser extension from Chrome Web Store if not already installed
+- Open acaflow and log in
+- Open 氢离子 (QingHydrogen) and log in
 
----
-
-**Setup guide (provide to user if needed):**
-
-```
-Step 1: 打开 Chrome 浏览器
-Step 2: 安装 Codex 浏览器插件（如未安装）
-        → 在 Chrome 插件商店搜索 "Codex" 并安装
-Step 3: 打开 acaflow 并登录
-        → 网址由用户或机构提供，确保页面正常加载且已登录
-Step 4: 打开 氢离子 (QingHydrogen) 并登录  
-        → 网址由用户或机构提供，确保聊天界面可用
-Step 5: 回到 Codex，重新发送综述写作指令
-```
-
-After the user confirms all three are ready, proceed to verify:
-- Run `pandoc --version` to confirm pandoc is installed
-- Run `python --version` or locate Python 3 for post-processing
-
----
-
-**If any of the three platforms is still inaccessible after setup attempts — STOP.** Tell the user which platform is blocking progress and wait for resolution. Never fall back to writing from training data. A review without systematic literature retrieval is worse than no review at all.
-
----
-
-## Workflow Overview
-
-```
-Phase 0: 前置检查 (acaflow + 氢离子 可用性)
-    ↓
-Phase 1a: acaflow 核心关联地图 (Map ①)
-    ↓
-Phase 1b: 基于 Map ① 聚类结果提炼正式标题
-    ↓
-Phase 1c: acaflow 剩余地图 (Map ②-⑤)
-    ↓
-Phase 2: 汇总大纲
-    ↓
-Phase 3: 氢离子 逐分支多轮深搜
-    ↓
-Phase 4: 去重 → DOI验证 → 大纲修正 → 用户确认
-    ↓
-Phase 5: nature-writing 撰写 (nature-writing 是本阶段的子组件，不是整个流程的替代品)
-    ↓
-Phase 6: pandoc → docx + 格式后处理
-```
-
-**Each phase depends on the output of the previous one.** You cannot write (Phase 5) before searching (Phase 3). You cannot search before mapping (Phase 1).
+If platforms are still inaccessible after this: STOP. Never write from training data.
 
 ---
 
