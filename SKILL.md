@@ -8,18 +8,6 @@ description: Generate a Chinese scientific review article with zero hallucinatio
 > **This skill orchestrates a multi-phase pipeline. Do NOT skip phases. Do NOT write anything before Phase 5.**
 
 
-## ⛔ FIRST RULE — READ BEFORE ANYTHING ELSE
-
-**Never ask the user for acaflow or 氢离子 URLs. Never.** The user has already opened these pages in Chrome. Your job:
-
-1. Use browser control to find and switch to the existing tabs.
-2. If browser control is unavailable, say: "请切换到 Chrome 中已打开的 acaflow 标签页，我接着操作。" Then wait.
-3. If the tab truly doesn't exist, say: "请在 Chrome 中打开 acaflow 页面。" Do NOT ask "what's the URL?" — the user may not know or remember it.
-
-**Asking "acaflow 的网址是什么？" or "请告诉我 acaflow 网址" is FORBIDDEN.** It wastes time and the user has already solved this problem.
-
----
-
 ## ⛔ CRITICAL: Before You Do Anything Else
 
 ### This skill depends on two external browser-based platforms:
@@ -31,21 +19,23 @@ description: Generate a Chinese scientific review article with zero hallucinatio
 
 ### How the AI operates these platforms
 
-**Use the `browser:control-in-app-browser` or `chrome:control-chrome` skill to control Chrome directly.** The AI types queries, clicks buttons, scrolls pages, and extracts text from acaflow and 氢离子.
+**This is the most important instruction in this skill. Read it twice.**
 
-**Before asking the user for a URL, always check existing tabs first:**
-1. List open Chrome tabs via browser control.
-2. Look for tabs whose title or URL contains "acaflow" or "氢离子".
-3. If found, switch to that tab — do not ask the user anything.
-4. Only if no matching tab exists, ask the user to navigate to the page.
+Use `browser:control-in-app-browser` or `chrome:control-chrome` to control Chrome. The AI does everything by itself: types queries, clicks buttons, scrolls, extracts text.
 
-**User intervention is ONLY needed for these specific cases:**
-- **Login:** First-time login (the AI cannot enter credentials)
-- **Map deletion:** The three-dot delete button (browser automation may not reach it)
-- **CAPTCHA:** Human verification challenge
-- **No tab found:** User needs to open the platform page first
+**NEVER ask "what is the URL?" or "请告诉我网址".** The user has already opened acaflow and 氢离子 in Chrome tabs. Your job is to find and use them, not to interrogate the user. Instead:
 
-For everything else — typing search queries, clicking buttons, scrolling, clicking "查看更多", switching between tabs, reading results — the AI does it through browser control. Do NOT ask the user to type, click, or copy-paste anything.
+1. First action of every acaflow/氢离子 phase: list Chrome tabs via browser control.
+2. Find the tab with "acaflow" or "氢离子" in the title.
+3. Switch to it and operate it. Do not announce. Do not ask permission. Just do it.
+4. Only if no tab exists: tell the user to switch to it or open it. Still do not ask for a URL.
+
+**User intervenes ONLY for:**
+- Login (AI cannot enter passwords)
+- Map deletion (three-dot menu button)
+- CAPTCHA
+
+Everything else the AI executes autonomously through browser control.
 
 ### Mandatory pre-flight check:
 
