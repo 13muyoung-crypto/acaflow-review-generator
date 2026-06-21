@@ -17,6 +17,17 @@ description: >
 | **acaflow** | Literature mapping with automatic clustering | Open in Chrome browser |
 | **氢离子** (QingHydrogen) | AI-powered deep literature search (~10 refs/round) | Open in Chrome browser |
 
+### How the AI operates these platforms
+
+**Use the `browser:control-in-app-browser` or `chrome:control-chrome` skill to control Chrome directly.** The AI types queries, clicks buttons, scrolls pages, and extracts text from acaflow and 氢离子 — the same way a human would, but automated. Do NOT describe what to do and wait for the user to do it. Execute it yourself.
+
+**User intervention is ONLY needed for these specific cases:**
+- **Login:** First-time login to acaflow or 氢离子 (the AI cannot enter credentials)
+- **Map deletion:** The three-dot delete button on acaflow map cards (browser automation may not reach it)
+- **CAPTCHA:** When 氢离子 or acaflow shows a human verification challenge
+
+For everything else — typing search queries, clicking search, scrolling, clicking "查看更多", switching tabs, reading results — the AI does it through browser control. Do not ask the user to do these things.
+
 ### Mandatory pre-flight check:
 
 Before doing anything else, ask the user:
@@ -83,7 +94,8 @@ Before any other action, verify accessibility:
 1. Confirm the user has acaflow open in Chrome and is logged in.
 2. Confirm the user has 氢离子 open in Chrome and is logged in.
 3. Confirm pandoc is installed: run `pandoc --version`.
-4. Confirm Python 3 is available for the post-processing script.
+4. Confirm Python 3 is available.
+5. Optionally, check if Zotero is available: `python3 <zotero-plugin-root>/skills/zotero/scripts/zotero.py status --json`. This determines PATH A vs PATH B in Phase 4.7 — but does NOT block progress if unavailable.
 
 If acaflow or 氢离子 are inaccessible due to network issues (common with GitHub/git protocol being blocked in some regions), note that the browser-based platforms may still work even when git push fails — they use different network paths.
 
@@ -97,9 +109,10 @@ If acaflow or 氢离子 are inaccessible due to network issues (common with GitH
 
 Use the user's raw topic description as the starting point. Example: "肠道菌群与孤独症关联的队列与组学研究".
 
-1. Create Map ① in acaflow.
-2. Save immediately + screenshot.
-3. Review the clustering results — what major themes emerged? What subtopics cluster together?
+1. **Use browser control to open acaflow in Chrome.** Navigate to the map creation interface.
+2. **Type the search query yourself** (e.g., "肠道菌群与孤独症关联的队列与组学研究") and create the map.
+3. **Save immediately** (click the save button via browser control). Then take a screenshot.
+4. **Review the clustering results** — what major themes emerged? What subtopics cluster together?
 
 ## Phase 1b: Title Refinement
 
@@ -205,8 +218,16 @@ After all maps are complete:
 1. **Aggregate** clustering results from all maps into one document.
 2. **Identify major themes** — these become sections.
 3. **Draft a preliminary outline.** Flow: background → core evidence → mechanisms → translational applications → outlook.
-4. **Ask the user** for target length. Assign proportional allocation.
-5. **Review with the user** before proceeding.
+
+### Determining Target Length and Reference Count
+
+**If the user has not explicitly specified word count and reference count, the AI must determine reasonable targets from the literature landscape — not default to minimal values.**
+
+1. **Assess literature volume:** Count papers already collected from acaflow maps. More literature → longer review.
+2. **Apply field norms:** Chinese biomedical reviews typically range 12,000–20,000 characters with 100–180 references. A 5-map review inherently targets the upper end.
+3. **Calculate from structure:** Allocate proportionally — introduction ~10%, background ~15%, core evidence ~20%, mechanisms ~25%, biomarkers ~15%, therapy ~10%, outlook ~5%.
+4. **Propose to user:** "基于 acaflow 地图规模（已收录约 N 篇），建议正文 ~15,000 字、参考文献 ~140 篇。有偏好吗？"
+5. **Do NOT silently set low targets.** A 5-map review is a major undertaking.
 
 **This outline is preliminary.** It will be refined after literature search (Phase 4.5).
 
@@ -216,8 +237,8 @@ After all maps are complete:
 
 ### What 氢离子 Is
 
-氢离子 is a browser-based AI literature search tool with its own curated database:
-- **Access:** Chrome browser, chat-style interface
+氢离子 is a browser-based AI literature search tool with its own curated database. **The AI operates it through browser control — typing queries, reading responses, and scrolling to load more.**
+- **Access:** Chrome browser, chat-style interface (AI navigates and controls it)
 - **Capacity:** ~8–12 references per response
 - **Context:** Maintains conversation context within a session
 - **Saturation signal:** After several rounds, it recycles previously shown references → sub-branch exhausted
@@ -235,12 +256,44 @@ For each sub-branch from the acaflow maps:
 4. **Stop when saturated** — fewer than 3 new refs per round or clear recycling.
 5. **Log discipline:** Tag each entry with the branch it supports.
 
-### Coverage Audit
+### Coverage Audit (MANDATORY — do not skip)
 
-Before declaring search complete:
-- Has every sub-branch from every acaflow map been queried with at least 2–3 rounds?
-- Are earlier maps (core evidence, mechanisms) searched more thoroughly?
-- Any obvious gaps?
+**Before declaring Phase 3 complete, you MUST pass this audit. The audit is not optional.**
+
+1. **List every sub-branch from every acaflow map.** This includes small/peripheral branches, not just the largest clusters. A 5-map acaflow run typically produces 12–25 sub-branches total.
+
+2. **Verify each sub-branch has been searched.** Mark each as ✓ (done) or ✗ (missed). If any sub-branch is marked ✗, go back and search it now.
+
+3. **Verify minimum rounds per sub-branch:**
+   - Large/central clusters: **minimum 4 rounds** from distinct angles
+   - Medium clusters: **minimum 3 rounds**
+   - Small/peripheral clusters: **minimum 2 rounds**
+   - If a sub-branch has fewer rounds than required, continue searching.
+
+4. **Verify reference yield:**
+   - Large clusters should yield 25+ unique references each
+   - Medium clusters: 15+ unique references
+   - Small clusters: 5+ unique references
+   - If any cluster is below threshold, reformulate queries and search more.
+
+5. **Red flag — do NOT do this:**
+   - ❌ Searching only the top 2–3 largest branches and calling it done
+   - ❌ One round per branch and moving on
+   - ❌ Accepting "no results found" after one query without trying reformulations
+   - ❌ Skipping maps ④ and ⑤ because "therapy isn't the main focus"
+
+6. **Present audit results to user** before moving to Phase 4:
+
+> "Phase 3 搜索覆盖审计：
+> - Map ①: 4/4 分支完成 (共 N 篇)
+> - Map ②: 6/6 分支完成 (共 N 篇)
+> - Map ③: 3/3 分支完成 (共 N 篇)
+> - Map ④: 2/2 分支完成 (共 N 篇)
+> - Map ⑤: 2/2 分支完成 (共 N 篇)
+> - 总计: 17 分支, XX 篇文献
+> 是否继续进入去重验证阶段？"
+
+If the total reference count is significantly below the Phase 2 target, go back and search more before proceeding.
 
 ---
 
@@ -252,68 +305,202 @@ Cross-reference all entries in the master log — this includes both acaflow-ext
 ### 4.2 Verify DOIs
 Every reference must have a verified DOI:
 1. Check DOI via `https://api.crossref.org/works/DOI_HERE`
-2. Or search via PubMed E-utility
-3. If unverifiable → remove the reference
+2. Or search via PubMed E-utility: `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=TITLE[title]`
+3. If unverifiable → remove the reference. Do not guess.
 
 ### 4.3 Group by Section
-Tag each reference with its supporting section(s).
+Tag each reference with its supporting section(s). Many references support multiple sections.
 
-### 4.4 Confirm with User
-Present: total count, count per section, under-referenced sections, removed references.
+### 4.4 Recency Audit (MANDATORY)
 
-### 4.5 Adapt the Outline
-Based on what was actually found:
-- Sections with abundant literature → split
-- Sparse sections → merge or trim
-- New themes → new sections
-- Adjust character allocation
+**A review is only as current as its references.**
+
+| Requirement | Threshold |
+|-------------|-----------|
+| Published within last 2 years | **≥ 40%** of total |
+| Published within last 1 year | **≥ 20%** of total |
+
+If thresholds not met → go back to Phase 3 with time-bounded queries. Do not pad with old references.
+
+### 4.5 Citation Quality Requirements
+
+1. **Primary over secondary.** Cite original research, not other reviews (max 10% reviews).
+2. **Peer-reviewed only.** No preprints, no conference abstracts without full text.
+3. **Human data over animal/cell-line** when both exist.
+4. **Large-N over small-N.** Do not rest broad claims on N=20 studies alone.
+5. **No predatory journals.** Verify indexing in PubMed/SCI.
+6. **DOI required.** Zero exceptions.
+
+### 4.6 Generate Importable Reference Files (MANDATORY)
+
+**Always generate structured reference files. Even if Zotero isn't used for citation, the user needs importable files.**
+
+1. **Generate `references.bib`** — BibTeX with all verified refs. Each entry: BibTeX key, full authors, title, journal, year, volume, pages, DOI.
+2. **Generate `references.ris`** — RIS format fallback.
+3. **Save both** in the working directory.
+
+### 4.7 Detect Zotero and Choose Citation Path
+
+```bash
+python3 <zotero-plugin-root>/skills/zotero/scripts/zotero.py status --json
+```
+
+**PATH A — Zotero available:**
+1. Import: `zotero.py import-bibtex --file references.bib --yes`
+2. Phase 5: cite with `[@bibtex_key]` in Markdown
+3. Phase 6: `pandoc ... --csl=nature.csl --bibliography=references.bib`
+
+**PATH B — No Zotero:**
+1. Phase 5: use manual `[1]`, `[2]` numbering
+2. Phase 6: append formatted reference list, plain pandoc
+3. Tell user: "未检测到 Zotero，使用手动编号。`references.bib` 和 `references.ris` 已生成，可随时导入任意文献管理软件。"
+
+### 4.8 Confirm with User
+
+Present: total count, per-section count, recency breakdown, citation path chosen, under-referenced sections, removed refs. Get approval.
 
 ---
 
 ## Phase 5: Manuscript Writing
 
-**Only begin writing after Phase 4 is complete and approved by the user.**
+**Only begin after Phase 4 is complete and approved.**
 
-Use the `nature-writing` skill for composition. Note: nature-writing is a **sub-component** invoked during this phase — it is NOT a substitute for the entire workflow. Phases 1–4 (literature retrieval and verification) must be completed before nature-writing is used.
+Use `nature-writing` as a sub-component for composition — it is NOT a replacement for the full pipeline.
 
-### Reference Format
+### 5.1 Required Manuscript Elements (Nature-Level)
 
-Manual inline numbering: `[1]`, `[2]`, `[3]`. Numbered sequentially by first appearance. Reference list at end uses `[N]` format, one entry per line, blank lines between entries.
+A complete review manuscript must include ALL of the following. Do not skip any.
 
-### Prohibited Patterns
+**① Abstract (摘要)**
+- 200–300 Chinese characters
+- Structured: background (1–2 sentences), scope (what this review covers), key findings (3–5 major conclusions), outlook (1 sentence)
+- Self-contained — a reader should understand the review's contribution from the abstract alone
+- Place at the very beginning of the manuscript, before the introduction
+
+**② Introduction (引言)**
+- Opens with the broad significance of the field
+- Narrows to the specific gap this review addresses
+- Ends with a clear statement of scope: "本文系统综述了……重点探讨了……"
+- No sub-headings within the introduction
+
+**③ Key Points box (要点)**
+- 3–5 bullet points summarizing the review's most important messages
+- Each bullet: one finding/conclusion, not a topic description
+- Place after the abstract in a callout box format:
+  ```
+  > **要点**
+  > - 关键发现1……
+  > - 关键发现2……
+  ```
+
+
+
+**⑥ Outstanding Questions (待解决问题)**
+
+End the review with a dedicated section listing 4–7 explicitly stated unanswered questions:
+```
+## 待解决问题
+
+1. ……的具体分子机制仍不清楚。
+2. ……在……中的作用缺乏直接证据。
+3. ……的长期安全性和有效性有待验证。
+4. ……的因果关系尚未通过前瞻性研究建立。
+```
+Each question must be grounded in a specific gap identified in the literature — not generic "more research is needed."
+
+### 5.2 Dynamic Adjustment During Writing
+
+Writing rarely follows the outline rigidly. The AI should exercise judgment within these boundaries:
+
+**Supplemental search (自主补搜):**
+- If a paragraph lacks supporting evidence → pause writing, go back to 氢离子 for 1–3 targeted rounds on the specific gap.
+- Verify new DOIs and add to the reference pool. Do not restart Phase 3 — this is a surgical fix, not a full re-search.
+- After supplementing, resume writing from where you left off.
+
+**Outline adjustment (动态调纲):**
+- Sub-section level: merge, split, or reallocate word count → AI decides autonomously. No need to ask.
+- Major section level: add, remove, or significantly restructure → ask the user first.
+
+**Trust the maps (信地图):**
+- If acaflow clustered a branch, the literature exists. Struggle to write it usually means Phase 3 didn't search deeply enough — not that the branch should be cut.
+- Default action: go back and search more. Do not silently delete sections from the outline.
+
+### 5.3 Citation Method
+
+| PATH A (Zotero) | PATH B (Manual) |
+|---|---|
+| `[@smith2025]` in Markdown | `[1]`, `[2]` inline |
+| Use `zotero.py cite` to insert | Number by first appearance |
+| Pandoc formats bibliography | Manual reference list at end |
+
+### 5.4 Prohibited Patterns
 
 | Pattern | Fix |
 |---------|-----|
 | Section titles with colons ("名词：描述") | Concise noun phrases |
-| Journal names in body text | Reference numbers only |
+| Journal names in body text | Citation only |
 | Parenthetical years "（2019）" | Remove entirely |
-| Reference stacking (5+ per sentence) | Break into synthesis across sentences |
-| One ref per statement listing | Synthesize across multiple refs |
-| Citing unread/unverified references | Only cite from the verified collection |
-| **Writing from training data instead of retrieved literature** | **NEVER do this** |
+| Reference stacking (5+ per sentence) | Synthesize across sentences |
+| One ref per statement listing | Synthesize across refs |
+| Citing unverified references | Only from verified collection |
+| Writing from training data | **NEVER** |
+| No abstract | **Required — see 5.1-①** |
 
-### Writing Quality Standards
 
-- **Paragraph unity:** One controlling idea per paragraph.
-- **Verb calibration:** demonstrate > reveal > show > suggest > correlate with.
-- **Synthesis over inventory:** Explain what papers collectively teach us, not what each paper individually found.
+### 5.5 Writing Quality Standards
+
+- **Paragraph unity:** One idea per paragraph. Topic sentence → evidence → transition.
+- **Verb calibration:** demonstrate > reveal > show > suggest > correlate.
+- **Synthesis over inventory:** What do papers collectively teach us?
+- **Audience awareness:** Write for a broad scientific audience — scientists outside your subfield should understand every paragraph.
+- **Abbreviation discipline:** Expand ALL abbreviations on first use. Do not assume readers know field-specific acronyms. Example: "结直肠癌（colorectal cancer, CRC）" on first mention, then "CRC" thereafter.
 
 ---
 
 ## Phase 6: Formatting and docx Output
 
-### Markdown Structure
+### PATH A — Zotero + Pandoc-citeproc
 
 ```markdown
 # 文章标题
 
-## 大节标题
+> **要点**
+> - 关键发现1……
+> - 关键发现2……
 
-正文。引用用 [1]、[2,3] 格式……
+**摘要：** 200–300字中文摘要……
+
+## 引言
+
+正文。引用 [@smith2025]。多项引用 [@smith2025; @jones2026]。
+
+*图1. 概述图说明……*
+
+## 大节标题
 
 ### 小节标题
 
-更多正文……
+## 待解决问题
+
+1. ……
+2. ……
+
+## 参考文献
+```
+
+```bash
+pandoc manuscript.md -o manuscript.docx --csl=nature.csl --bibliography=references.bib --from=markdown --to=docx
+```
+
+### PATH B — Manual Numbering
+
+```markdown
+# 文章标题
+
+> **要点**
+> - 关键发现1……
+
+**摘要：** ……
 
 ## 参考文献
 
@@ -322,21 +509,18 @@ Manual inline numbering: `[1]`, `[2]`, `[3]`. Numbered sequentially by first app
 [2] Author B, et al. Title. Journal, Year, Volume: Pages. DOI: xxx
 ```
 
-- `#` title, `##` major sections, `###` sub-sections
-- Blank line between each `[N]` reference entry (critical for pandoc)
-- Superscript: `10^12^`
+- **Blank line between each `[N]` entry** — critical for pandoc paragraph separation.
+- Pandoc: `pandoc manuscript.md -o manuscript.docx --from=markdown --to=docx`
 
-### Pandoc Command
+### Obtaining nature.csl (PATH A)
 
 ```bash
-pandoc manuscript.md -o manuscript.docx --from=markdown --to=docx
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/citation-style-language/styles/master/nature.csl" -OutFile "nature.csl"
 ```
 
-No `--csl` or `--bibliography` — references are manually formatted.
+### Post-Processing (Both Paths)
 
-### Post-Processing
-
-Use `scripts/fix_docx_fonts.py`:
+`scripts/fix_docx_fonts.py`:
 
 | Property | Value |
 |----------|-------|
@@ -350,9 +534,9 @@ Use `scripts/fix_docx_fonts.py`:
 | Body | 12pt |
 
 ### Windows Caveats
+- Chinese paths → copy to `$env:TEMP` before Python
+- PowerShell: use `if/else`, no ternary
 
-- Chinese paths → copy to `$env:TEMP` before Python processing
-- PowerShell: no ternary operators, use `if/else`
 
 ---
 
@@ -360,32 +544,47 @@ Use `scripts/fix_docx_fonts.py`:
 
 | Phase | Problem | Action |
 |-------|---------|--------|
-| 0 | acaflow/氢离子 inaccessible | Guide user through setup: Chrome → Codex 插件 → acaflow 登录 → 氢离子 登录 → 重试 |
-| 0 | "acaflow" skill not found | Use THIS skill (acaflow-review-generator) — it IS the acaflow workflow |
-| 1 | Map limit reached | Delete oldest map via three-dot menu |
+| 0 | acaflow/氢离子 inaccessible | Guide user: Chrome → Codex 插件 → acaflow 登录 → 氢离子 登录 |
+| 0 | "acaflow" skill not found | Use THIS skill — it IS the acaflow workflow |
+| 1 | Map limit reached | Prompt user to manually delete an old map |
 | 1 | Unsaved map lost | Regenerate; always save immediately |
-| 3 | Too few refs per round | Normal — continue multi-round (~10/round) |
-| 3 | 氢离子 recycles refs | Sub-branch saturated → move on |
-| 3 | Missing DOIs | Flag for Phase 4 verification |
+| 1 | acaflow CAPTCHA | Tell user to complete in Chrome; cannot auto-solve |
+| 3 | 氢离子 CAPTCHA | Tell user to complete in Chrome; review existing refs while waiting |
+| 3 | Too few refs per round | Continue multi-round (~10/round) |
+| 3 | 氢离子 recycles refs | Branch saturated → move on |
+| 3 | Skipping small branches | Run coverage audit; 2–4 rounds per branch |
+| 4 | .bib generation fails | Verify all DOIs; fix malformed fields |
+| 4 | Zotero import fails | Check Zotero running with local API (port 23119) |
+| 5 | Reference/word count too low | Go back to Phase 2/3 |
+| 5 | Citation key not in .bib | Search Zotero; add to .bib if missing |
 | 5 | Reference hallucination | Only cite from verified collection |
-| 5 | Writing from training data | **NEVER** — if literature isn't ready, go back to Phase 3 |
+| 5 | Writing from training data | **NEVER** |
+| 5 | Missing abstract / figures / key points | See Phase 5.1 — these are mandatory |
 | 6 | References run together | Blank line between each `[N]` entry |
+| 6 | Pandoc citation errors | Check `[@key]` matches .bib keys exactly |
 | 6 | Font not applying | Modify both styles.xml AND theme1.xml |
 | 6 | Chinese path errors | Copy to `$env:TEMP` first |
+
 
 ---
 
 ## Key Principles
 
-1. **Literature first, writing second.** Complete all retrieval and verification before opening the manuscript.
-2. **Let acaflow cluster mechanisms.** Do not impose a preset framework.
+1. **Literature first, writing second.**
+2. **Let acaflow cluster mechanisms.**
 3. **Multi-round narrow search beats single broad search.**
-4. **Verify DOIs before citing.** Remove, don't guess.
+4. **Verify DOIs before citing.**
 5. **Revise the outline after search.**
-6. **Format at the end.**
-7. **Synthesize, don't list.**
-8. **If acaflow or 氢离子 are unavailable, STOP.** Never substitute with training data.
-9. **This skill is the orchestrator.** nature-writing is a sub-component used in Phase 5, not a replacement for the full pipeline.
+6. **Always generate `references.bib` + `references.ris`.** Zotero-available → use it. No Zotero → manual numbering + deliver files.
+7. **Format at the end.**
+8. **Synthesize, don't list.**
+9. **If acaflow or 氢离子 are unavailable, STOP.**
+10. **This skill is the orchestrator.** nature-writing is a sub-component.
+11. **Targets from literature, not laziness.**
+12. **Every sub-branch, every time.** 12–25 branches, all covered.
+13. **≥20% refs from last 1 year, ≥40% from last 2 years.**
+14. **Quality beats quantity.**
+15. **Mandatory manuscript elements.** Abstract, key points, and outstanding questions — always include these. Define all abbreviations on first use.
 
 ---
 
@@ -393,18 +592,19 @@ Use `scripts/fix_docx_fonts.py`:
 
 ```
 project-dir/
-├── refined-title.md           # Phase 1b output (finalized title + Map ① rationale)
-├── acaflow-maps-summary.md    # Clustering results from all 5 maps
+├── refined-title.md           # Phase 1b output
+├── acaflow-maps-summary.md    # Clustering from all maps
 ├── preliminary-outline.md     # Phase 2 output
-├── hydrogen-refs-log.md       # Master reference log (Phase 3)
-├── references-by-section.md   # Grouped references (Phase 4)
+├── hydrogen-refs-log.md       # Reference log (Phase 3)
+├── hydrogen-answers.md        # 氢离子 narrative answers by branch
+├── references-by-section.md   # Grouped refs (Phase 4)
 ├── verified-dois.md           # DOI verification results
-├── manuscript.md              # Final markdown (Phase 5)
-├── manuscript.docx            # Final output (Phase 6)
-└── nature.csl                 # Citation style (downloaded once)
+├── references.bib             # BibTeX for import
+├── references.ris             # RIS for import
+├── manuscript.md              # Final markdown
+├── manuscript.docx            # Final docx
+└── nature.csl                 # Citation style (PATH A)
 ```
-
-
 
 
 
