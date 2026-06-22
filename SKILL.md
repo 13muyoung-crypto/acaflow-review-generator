@@ -19,23 +19,35 @@ description: Generate a Chinese scientific review article with zero hallucinatio
 
 ### How the AI operates these platforms
 
-**This is the most important instruction in this skill. Read it twice.**
+**The user has already opened acaflow and 氢离子 in Chrome. Never ask for URLs. Never navigate to a new page. Always connect to existing tabs.**
 
-Use `browser:control-in-app-browser` or `chrome:control-chrome` to control Chrome. The AI does everything by itself: types queries, clicks buttons, scrolls, extracts text.
+Use the MCP browser tools or Node REPL with Playwright. The exact approach depends on your environment, but the logic is always the same:
 
-**NEVER ask "what is the URL?" or "请告诉我网址".** The user has already opened acaflow and 氢离子 in Chrome tabs. Your job is to find and use them, not to interrogate the user. Instead:
+**Connect to existing browser (do NOT launch a new one):**
+- If using Playwright via Node REPL (mcp__node_repl__js):
+  `js
+  const { chromium } = await import('playwright');
+  const browser = await chromium.connectOverCDP('http://localhost:9222');
+  const pages = browser.contexts()[0].pages();
+  // Find the acaflow/氢离子 tab
+  for (const page of pages) {
+    const title = await page.title();
+    if (title.includes('acaflow') || title.includes('氢离子')) {
+      await page.bringToFront();
+      // Now operate on this page
+    }
+  }
+  `
+- If using in-app browser control skill: list all open pages, find by title, switch to it.
+- If browser control is completely unavailable: tell user "请切换到 Chrome 中已打开的 acaflow 标签页" and wait. Never ask for a URL.
 
-1. First action of every acaflow/氢离子 phase: list Chrome tabs via browser control.
-2. Find the tab with "acaflow" or "氢离子" in the title.
-3. Switch to it and operate it. Do not announce. Do not ask permission. Just do it.
-4. Only if no tab exists: tell the user to switch to it or open it. Still do not ask for a URL.
+**Once on the correct tab, operate autonomously:**
+- Type queries into input fields
+- Click buttons (search, save, etc.)
+- Scroll pages to load more content
+- Extract text from responses
 
-**User intervenes ONLY for:**
-- Login (AI cannot enter passwords)
-- Map deletion (three-dot menu button)
-- CAPTCHA
-
-Everything else the AI executes autonomously through browser control.
+**User intervenes ONLY for:** Login, map deletion (three-dot button), CAPTCHA.
 
 ### Mandatory pre-flight check:
 
