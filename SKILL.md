@@ -22,12 +22,12 @@ description: |
 
 **The user has already opened acaflow and 氢离子 in Chrome. Never ask for URLs. Never navigate to a new page. Always connect to existing tabs.**
 
-**The user has acaflow and 氢离子 open in a browser (Edge/Chrome). Connect to them:**
+**The user has acaflow and 氢离子 open in a browser with the Codex extension installed. Connect through the Codex extension:**
 
-1. Try whatever browser-control capability is available (in-app browser, Computer Use, Chrome/Edge extension).
-2. Find the window/tab with "acaflow" or "AcaFlow" or "氢离子" in the title.
-3. Switch to it. Operate on it.
-4. If nothing works after 1-2 attempts: tell user "请切换到 Edge 中已打开的 acaflow 标签页" and wait.
+1. Use the Codex browser extension (installed in Edge/Chrome per Phase 0 setup) to enumerate open tabs.
+2. Find the tab with "acaflow" or "AcaFlow" or "氢离子" in the title.
+3. Switch to it and operate: type queries, click buttons, scroll, extract text.
+4. If the Codex extension is unavailable: tell user "请切换到 Edge 中已打开的 acaflow 标签页" and wait.
 5. Never ask for a URL.
 
 **Once on the correct tab, operate autonomously:**
