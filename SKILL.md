@@ -22,12 +22,11 @@ description: |
 
 **The user has already opened acaflow and 氢离子 in Chrome. Never ask for URLs. Never navigate to a new page. Always connect to existing tabs.**
 
-Use the MCP browser tools or Node REPL with Playwright. The exact approach depends on your environment, but the logic is always the same:
-
-**Connect to the user's existing browser session:**
-- Use available browser control tools to list open tabs, find by title, switch to the target tab.
-- If browser control is unavailable: tell user "请切换到 Chrome 中已打开的 acaflow 标签页" and wait.
-- Never ask for a URL. Never launch a new browser window.
+**Use browser:control-in-app-browser or chrome:control-chrome skill.**
+These are built-in Codex skills that control the browser directly — they do NOT require Playwright or Chromium installation.
+- List open tabs/pages, find the one with "acaflow" or "氢离子" in the title, switch to it.
+- If these skills are unavailable: tell user "请切换到 Chrome 中已打开的 acaflow 标签页" and wait.
+- Never ask for a URL.
 
 **Once on the correct tab, operate autonomously:**
 - Type queries into input fields
