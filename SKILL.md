@@ -22,11 +22,13 @@ description: |
 
 **The user has already opened acaflow and 氢离子 in Chrome. Never ask for URLs. Never navigate to a new page. Always connect to existing tabs.**
 
-**Use browser:control-in-app-browser or chrome:control-chrome skill.**
-These are built-in Codex skills that control the browser directly — they do NOT require Playwright or Chromium installation.
-- List open tabs/pages, find the one with "acaflow" or "氢离子" in the title, switch to it.
-- If these skills are unavailable: tell user "请切换到 Chrome 中已打开的 acaflow 标签页" and wait.
-- Never ask for a URL.
+**The user has acaflow and 氢离子 open in a browser (Edge/Chrome). Connect to them:**
+
+1. Try whatever browser-control capability is available (in-app browser, Computer Use, Chrome/Edge extension).
+2. Find the window/tab with "acaflow" or "AcaFlow" or "氢离子" in the title.
+3. Switch to it. Operate on it.
+4. If nothing works after 1-2 attempts: tell user "请切换到 Edge 中已打开的 acaflow 标签页" and wait.
+5. Never ask for a URL.
 
 **Once on the correct tab, operate autonomously:**
 - Type queries into input fields
