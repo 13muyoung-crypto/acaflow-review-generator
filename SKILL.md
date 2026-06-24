@@ -1,6 +1,6 @@
 ---
 name: acaflow-review-generator
-description: Generate a Chinese scientific review article with zero hallucinations. This skill orchestrates a pipeline of external tools: acaflow (browser-based literature mapping platform) for building literature maps, 氢离子/QingHydrogen (browser-based AI deep search) for per-branch reference retrieval, nature-writing for manuscript composition, and pandoc for docx output. Use this skill when the user wants to write a comprehensive review with systematically verified references, or mentions "acaflow", "写综述", "综述生成", "写review", "acaflow综述", "用acaflow", "氢离子检索", or "文献地图写文章". IMPORTANT: acaflow is an external browser-based platform — this skill is the workflow that coordinates it, not acaflow itself. If you cannot find a skill named "acaflow", use THIS skill instead — it IS the acaflow review generation workflow.
+description: "Generate a Chinese scientific review article with zero hallucinations. This skill orchestrates a pipeline of external tools: acaflow (browser-based literature mapping platform) for building literature maps, 氢离子/QingHydrogen (browser-based AI deep search) for per-branch reference retrieval, nature-writing for manuscript composition, and pandoc for docx output. Use this skill when the user wants to write a comprehensive review with systematically verified references, or mentions "acaflow", "写综述", "综述生成", "写review", "acaflow综述", "用acaflow", "氢离子检索", or "文献地图写文章". IMPORTANT: acaflow is an external browser-based platform — this skill is the workflow that coordinates it, not acaflow itself. If you cannot find a skill named “acaflow”, use THIS skill instead — it IS the acaflow review generation workflow.""
 ---
 
 # Acaflow Review Generator
@@ -23,23 +23,10 @@ description: Generate a Chinese scientific review article with zero hallucinatio
 
 Use the MCP browser tools or Node REPL with Playwright. The exact approach depends on your environment, but the logic is always the same:
 
-**Connect to existing browser (do NOT launch a new one):**
-- If using Playwright via Node REPL (mcp__node_repl__js):
-  `js
-  const { chromium } = await import('playwright');
-  const browser = await chromium.connectOverCDP('http://localhost:9222');
-  const pages = browser.contexts()[0].pages();
-  // Find the acaflow/氢离子 tab
-  for (const page of pages) {
-    const title = await page.title();
-    if (title.includes('acaflow') || title.includes('氢离子')) {
-      await page.bringToFront();
-      // Now operate on this page
-    }
-  }
-  `
-- If using in-app browser control skill: list all open pages, find by title, switch to it.
-- If browser control is completely unavailable: tell user "请切换到 Chrome 中已打开的 acaflow 标签页" and wait. Never ask for a URL.
+**Connect to the user's existing browser session:**
+- Use available browser control tools to list open tabs, find by title, switch to the target tab.
+- If browser control is unavailable: tell user "请切换到 Chrome 中已打开的 acaflow 标签页" and wait.
+- Never ask for a URL. Never launch a new browser window.
 
 **Once on the correct tab, operate autonomously:**
 - Type queries into input fields
