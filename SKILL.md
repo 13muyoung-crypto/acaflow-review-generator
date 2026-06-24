@@ -1,6 +1,7 @@
 ---
 name: acaflow-review-generator
-description: "Generate a Chinese scientific review article with zero hallucinations. This skill orchestrates a pipeline of external tools: acaflow (browser-based literature mapping platform) for building literature maps, 氢离子/QingHydrogen (browser-based AI deep search) for per-branch reference retrieval, nature-writing for manuscript composition, and pandoc for docx output. Use this skill when the user wants to write a comprehensive review with systematically verified references, or mentions "acaflow", "写综述", "综述生成", "写review", "acaflow综述", "用acaflow", "氢离子检索", or "文献地图写文章". IMPORTANT: acaflow is an external browser-based platform — this skill is the workflow that coordinates it, not acaflow itself. If you cannot find a skill named “acaflow”, use THIS skill instead — it IS the acaflow review generation workflow.""
+description: |
+  Generate a Chinese scientific review article with zero hallucinations. This skill orchestrates a pipeline of external tools: acaflow (browser-based literature mapping platform) for building literature maps, 氢离子/QingHydrogen (browser-based AI deep search) for per-branch reference retrieval, nature-writing for manuscript composition, and pandoc for docx output. Use this skill when the user wants to write a comprehensive review with systematically verified references, or mentions "acaflow", "写综述", "综述生成", "写review", "acaflow综述", "用acaflow", "氢离子检索", or "文献地图写文章". IMPORTANT: acaflow is an external browser-based platform — this skill is the workflow that coordinates it, not acaflow itself. If you cannot find a skill named “acaflow”, use THIS skill instead — it IS the acaflow review generation workflow.
 ---
 
 # Acaflow Review Generator
